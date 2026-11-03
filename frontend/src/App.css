@@ -1,0 +1,170 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.app {
+    min-height: 100vh;
+    background: #f8f7fc;
+    color: #25213a;
+    font-family: Arial, sans-serif;
+}
+
+.navbar {
+    height: 75px;
+    padding: 0 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+}
+
+.navbar h2 {
+    font-size: 25px;
+    color: #4338ca;
+}
+
+.navbar h2 span {
+    color: #f59e0b;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+}
+
+.login-btn,
+.explore-btn,
+.book-btn {
+    border: none;
+    background: #6c4cf1;
+    color: white;
+    padding: 12px 22px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.hero {
+    text-align: center;
+    padding: 100px 20px;
+    background: linear-gradient(135deg, #eee9ff, #faf5ff);
+}
+
+.tagline {
+    color: #6c4cf1;
+    font-weight: bold;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+}
+
+.hero h1 {
+    font-size: clamp(38px, 6vw, 65px);
+    line-height: 1.15;
+    margin-bottom: 20px;
+}
+
+.hero h1 span {
+    color: #6c4cf1;
+}
+
+.hero > p:not(.tagline) {
+    color: #666;
+    margin-bottom: 30px;
+    line-height: 1.7;
+}
+
+.explore-btn {
+    display: inline-block;
+    text-decoration: none;
+}
+
+.events-section {
+    padding: 60px 8%;
+}
+
+.events-section h2 {
+    margin-bottom: 30px;
+    font-size: 30px;
+}
+
+.event-container {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(240px, 1fr)
+    );
+    gap: 25px;
+}
+
+.event-card {
+    background: white;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.event-card h3 {
+    margin-bottom: 15px;
+}
+
+.event-card p {
+    color: #777;
+    line-height: 1.6;
+    min-height: 50px;
+}
+
+.event-info {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+.event-info span:first-child {
+    color: #6c4cf1;
+}
+
+.book-btn {
+    width: 100%;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    background: #25213a;
+    color: white;
+}
+
+footer p {
+    margin: 5px;
+}
+
+@media (max-width: 600px) {
+    .navbar {
+        padding: 0 5%;
+    }
+
+    .nav-links {
+        gap: 12px;
+    }
+
+    .nav-links a {
+        display: none;
+    }
+
+    .hero {
+        padding: 75px 20px;
+    }
+
+    .events-section {
+        padding: 40px 5%;
+    }
+}
