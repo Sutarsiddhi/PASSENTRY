@@ -3,66 +3,50 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+const eventRoutes = require("./routes/eventRoutes");
+
+const {
+    notFound,
+    errorHandler
+} = require("./middleware/errorMiddleware");
+
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Home API
+// Home route
 app.get("/", (req, res) => {
-    res.json({
+    res.status(200).json({
         success: true,
         message: "Welcome to PASSENTRY API!"
     });
 });
 
-// Server status API
+// API status
 app.get("/api/status", (req, res) => {
-    res.json({
+    res.status(200).json({
         success: true,
         project: "PASSENTRY",
-        status: "Running",
-        message: "Backend server is working successfully!"
+        status: "Running"
     });
 });
 
-// Test events API
-app.get("/api/events", (req, res) => {
-    const events = [
-        {
-            id: 1,
-            title: "College Tech Fest 2026",
-            description: "A technical festival for students",
-            price: 199,
-            capacity: 500
-        },
-        {
-            id: 2,
-            title: "Cultural Fest 2026",
-            description: "Music, dance and cultural performances",
-            price: 299,
-            capacity: 300
-        },
-        {
-            id: 3,
-            title: "Sports Fest 2026",
-            description: "Inter-college sports competition",
-            price: 149,
-            capacity: 200
-        }
-    ];
+// Event routes
+app.use("/api/events", eventRoutes);
 
-    res.json({
-        success: true,
-        count: events.length,
-        events: events
-    });
-});
+// Handle unknown routes
+app.use(notFound);
 
-// Server configuration
+// Error handling
+app.use(errorHandler);
+
+// Server
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-    console.log(`PASSENTRY server running on port ${PORT}`);
+    console.log(
+        `PASSENTRY server running on port ${PORT}`
+    );
 });

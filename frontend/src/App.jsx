@@ -10,24 +10,28 @@ function App() {
     const [events, setEvents] = useState([]);
 
     useEffect(() => {
-        // Check backend status
-        fetch("http://localhost:5000/api/status")
-            .then((response) => response.json())
-            .then((data) => {
-                setServerStatus(data.message);
-            })
-            .catch(() => {
-                setServerStatus("Backend connection failed!");
-            });
-
-        // Fetch events
         fetch("http://localhost:5000/api/events")
-            .then((response) => response.json())
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch events");
+                }
+
+                return response.json();
+            })
             .then((data) => {
                 setEvents(data.events);
             })
             .catch((error) => {
-                console.log("Error fetching events:", error);
+                console.error("Error:", error);
+            });
+
+        fetch("http://localhost:5000/api/status")
+            .then((response) => response.json())
+            .then((data) => {
+                setServerStatus(data.status);
+            })
+            .catch(() => {
+                setServerStatus("Backend connection failed!");
             });
     }, []);
 
