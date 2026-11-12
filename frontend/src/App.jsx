@@ -78,19 +78,29 @@ function App() {
 
                     {events.length > 0 ? (
                         events.map((event) => (
-                            <div className="event-card" key={event.id}>
+                            <div className="event-card" key={event._id}>
+
                                 <h3>{event.title}</h3>
 
                                 <p>{event.description}</p>
 
                                 <div className="event-info">
                                     <span>₹{event.price}</span>
-                                    <span>{event.capacity} Seats</span>
+                                    <span>{event.availableSeats} Seats Left</span>
                                 </div>
+
+                                <p>
+                                    Venue: {event.venue}
+                                </p>
+
+                                <p>
+                                    Date: {new Date(event.date).toLocaleDateString("en-IN")}
+                                </p>
 
                                 <button className="book-btn">
                                     View Event
                                 </button>
+
                             </div>
                         ))
                     ) : (

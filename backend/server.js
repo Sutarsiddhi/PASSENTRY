@@ -3,6 +3,8 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+const connectDB = require("./config/db");
+
 const eventRoutes = require("./routes/eventRoutes");
 
 const {
@@ -16,7 +18,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Home route
+// Home API
 app.get("/", (req, res) => {
     res.status(200).json({
         success: true,
@@ -24,29 +26,42 @@ app.get("/", (req, res) => {
     });
 });
 
-// API status
+// Status API
 app.get("/api/status", (req, res) => {
     res.status(200).json({
         success: true,
         project: "PASSENTRY",
-        status: "Running"
+        status: "Running",
+        database: "Connected"
     });
 });
 
 // Event routes
 app.use("/api/events", eventRoutes);
 
-// Handle unknown routes
+// Handle invalid routes
 app.use(notFound);
 
-// Error handling
+// Error handler
 app.use(errorHandler);
 
-// Server
-const PORT = process.env.PORT || 5000;
+// Start server after database connection
+const startServer = async () => {
+    try {
+        await connectDB();
 
-app.listen(PORT, () => {
-    console.log(
-        `PASSENTRY server running on port ${PORT}`
-    );
-});
+        const PORT = process.env.PORT || 5000;
+
+        app.listen(PORT, () => {
+            console.log(
+                `PASSENTRY server running on port ${PORT}`
+            );
+        });
+
+    } catch (error) {
+        console.error("Server startup failed:", error.message);
+        process.exit(1);
+    }
+};
+
+startServer();
