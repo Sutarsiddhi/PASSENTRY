@@ -1,11 +1,13 @@
 
 const express = require("express");
 const cors = require("cors");
+
 require("dotenv").config();
 
 const connectDB = require("./config/db");
 
 const eventRoutes = require("./routes/eventRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const {
     notFound,
@@ -14,11 +16,13 @@ const {
 
 const app = express();
 
+
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Home API
+
+// Home route
 app.get("/", (req, res) => {
     res.status(200).json({
         success: true,
@@ -26,7 +30,8 @@ app.get("/", (req, res) => {
     });
 });
 
-// Status API
+
+// Status route
 app.get("/api/status", (req, res) => {
     res.status(200).json({
         success: true,
@@ -36,16 +41,18 @@ app.get("/api/status", (req, res) => {
     });
 });
 
-// Event routes
+
+// API routes
+app.use("/api/auth", authRoutes);
 app.use("/api/events", eventRoutes);
 
-// Handle invalid routes
-app.use(notFound);
 
-// Error handler
+// Error handling
+app.use(notFound);
 app.use(errorHandler);
 
-// Start server after database connection
+
+// Start server after connecting to MongoDB
 const startServer = async () => {
     try {
         await connectDB();
@@ -59,7 +66,11 @@ const startServer = async () => {
         });
 
     } catch (error) {
-        console.error("Server startup failed:", error.message);
+        console.error(
+            "Server startup failed:",
+            error.message
+        );
+
         process.exit(1);
     }
 };
