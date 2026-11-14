@@ -1,35 +1,32 @@
 
-import axios from "axios";
+import api from "./api";
 
-const API_URL = "http://localhost:5000/api/auth";
 
+// Register student
 export const registerUser = async (userData) => {
-    const response = await axios.post(
-        `${API_URL}/register`,
+    const response = await api.post(
+        "/auth/register",
         userData
     );
 
     return response.data;
 };
 
+
+// Login user
 export const loginUser = async (credentials) => {
-    const response = await axios.post(
-        `${API_URL}/login`,
+    const response = await api.post(
+        "/auth/login",
         credentials
     );
 
     return response.data;
 };
 
-export const getCurrentUser = async (token) => {
-    const response = await axios.get(
-        `${API_URL}/me`,
-        {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }
-    );
+
+// Get logged-in user
+export const getCurrentUser = async () => {
+    const response = await api.get("/auth/me");
 
     return response.data;
 };

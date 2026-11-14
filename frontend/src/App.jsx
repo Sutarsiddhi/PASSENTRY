@@ -1,122 +1,100 @@
 
-import { useEffect, useState } from "react";
-import "./App.css";
+import {
+    BrowserRouter,
+    Routes,
+    Route,
+    Navigate
+} from "react-router-dom";
 
-function App() {
-    const [serverStatus, setServerStatus] = useState(
-        "Connecting to backend..."
-    );
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
-    const [events, setEvents] = useState([]);
+import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
 
-    useEffect(() => {
-        fetch("http://localhost:5000/api/events")
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Failed to fetch events");
-                }
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 
-                return response.json();
-            })
-            .then((data) => {
-                setEvents(data.events);
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-            });
 
-        fetch("http://localhost:5000/api/status")
-            .then((response) => response.json())
-            .then((data) => {
-                setServerStatus(data.status);
-            })
-            .catch(() => {
-                setServerStatus("Backend connection failed!");
-            });
-    }, []);
+const AppRoutes = () => {
+
+    const { user, loading } = useAuth();
+
+    if (loading) {
+        return <div className="loading-screen">Loading PASSENTRY...</div>;
+    }
 
     return (
-        <div className="app">
+        <>
+            <Navbar />
 
-            <nav className="navbar">
-                <h2>PASSENTRY<span>.</span></h2>
+            <Routes>
 
-                <div className="nav-links">
-                    <a href="/">Home</a>
-                    <a href="#events">Events</a>
-                    <button className="login-btn">
-                        Login
-                    </button>
-                </div>
-            </nav>
+                {/* Public pages */}
+                <Route path="/" element={<Home />} />
 
-            <section className="hero">
-                <p className="tagline">
-                    YOUR FEST. YOUR MOMENT.
-                </p>
+                <Route
+                    path="/login"
+                    element={
+                        user
+                            ? <Navigate to={user.role === "admin" ? "/admin" : "/dashboard"} replace />
+                            : <Login />
+                    }
+                />
 
-                <h1>
-                    Every Great Fest
-                    <br />
-                    Starts With a <span>Ticket.</span>
-                </h1>
+                <Route
+                    path="/register"
+                    element={
+                        user
+                            ? <Navigate to="/dashboard" replace />
+                            : <Register />
+                    }
+                />
 
-                <p>
-                    Discover college festivals, explore exciting
-                    events and book your tickets with PASSENTRY.
-                </p>
 
-                <a href="#events" className="explore-btn">
-                    Explore Events
-                </a>
-            </section>
+                {/* Protected student and admin dashboard */}
+                <Route element={<ProtectedRoute allowedRoles={["student", "admin"]} />}>
+                    <Route
+                        path="/dashboard"
+                        element={<Dashboard />}
+                    />
+                </Route>
 
-            <section className="events-section" id="events">
-                <h2>Explore Upcoming Events</h2>
 
-                <div className="event-container">
+                {/* Admin-only dashboard */}
+                <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+                    <Route
+                        path="/admin"
+                        element={<AdminDashboard />}
+                    />
+                </Route>
 
-                    {events.length > 0 ? (
-                        events.map((event) => (
-                            <div className="event-card" key={event._id}>
 
-                                <h3>{event.title}</h3>
+                {/* Unknown routes */}
+                <Route
+                    path="*"
+                    element={<Navigate to="/" replace />}
+                />
 
-                                <p>{event.description}</p>
-
-                                <div className="event-info">
-                                    <span>₹{event.price}</span>
-                                    <span>{event.availableSeats} Seats Left</span>
-                                </div>
-
-                                <p>
-                                    Venue: {event.venue}
-                                </p>
-
-                                <p>
-                                    Date: {new Date(event.date).toLocaleDateString("en-IN")}
-                                </p>
-
-                                <button className="book-btn">
-                                    View Event
-                                </button>
-
-                            </div>
-                        ))
-                    ) : (
-                        <p>Loading events...</p>
-                    )}
-
-                </div>
-            </section>
-
-            <footer>
-                <p>© 2026 PASSENTRY. All rights reserved.</p>
-                <p>{serverStatus}</p>
-            </footer>
-
-        </div>
+            </Routes>
+        </>
     );
-}
+};
+
+
+const App = () => {
+
+    return (
+        <BrowserRouter>
+
+            <AuthProvider>
+                <AppRoutes />
+            </AuthProvider>
+
+        </BrowserRouter>
+    );
+};
 
 export default App;
