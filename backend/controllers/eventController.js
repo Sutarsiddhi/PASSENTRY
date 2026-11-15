@@ -1,9 +1,41 @@
 
 const Event = require("../models/Event");
 
+const fs = require("fs/promises");
+const path = require("path");
+
+
+// Helper: Remove a locally stored poster
+const removePoster = async (posterUrl) => {
+
+    if (!posterUrl || !posterUrl.startsWith("/uploads/")) {
+        return;
+    }
+
+    const filename = path.basename(posterUrl);
+
+    const filePath = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        filename
+    );
+
+    try {
+        await fs.unlink(filePath);
+    } catch (error) {
+        if (error.code !== "ENOENT") {
+            console.error("Poster cleanup failed:", error.message);
+        }
+    }
+};
+
+
 // 1. Get all events
 const getAllEvents = async (req, res, next) => {
+
     try {
+
         const events = await Event.find().sort({
             createdAt: -1
         });
@@ -11,7 +43,7 @@ const getAllEvents = async (req, res, next) => {
         res.status(200).json({
             success: true,
             count: events.length,
-            events: events
+            events
         });
 
     } catch (error) {
@@ -22,7 +54,9 @@ const getAllEvents = async (req, res, next) => {
 
 // 2. Get event by ID
 const getEventById = async (req, res, next) => {
+
     try {
+
         const event = await Event.findById(req.params.id);
 
         if (!event) {
@@ -34,7 +68,7 @@ const getEventById = async (req, res, next) => {
 
         res.status(200).json({
             success: true,
-            event: event
+            event
         });
 
     } catch (error) {
@@ -43,9 +77,78 @@ const getEventById = async (req, res, next) => {
 };
 
 
-// 3. Create a new event
-const createEvent = async (req, res, next) => {
+// 3. Get admin dashboard statistics
+const getEventStats = async (req, res, next) => {
+
     try {
+
+        const currentDate = new Date();
+
+        const [
+            totalEvents,
+            upcomingEvents,
+            capacityResult,
+            seatsResult
+        ] = await Promise.all([
+
+            Event.countDocuments(),
+
+            Event.countDocuments({
+                status: "upcoming",
+                date: { $gte: currentDate }
+            }),
+
+            Event.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        total: { $sum: "$capacity" }
+                    }
+                }
+            ]),
+
+            Event.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        total: { $sum: "$availableSeats" }
+                    }
+                }
+            ])
+
+        ]);
+
+        const totalCapacity =
+            capacityResult[0]?.total || 0;
+
+        const availableSeats =
+            seatsResult[0]?.total || 0;
+
+        res.status(200).json({
+
+            success: true,
+
+            stats: {
+                totalEvents,
+                upcomingEvents,
+                totalCapacity,
+                availableSeats,
+                bookedSeats: totalCapacity - availableSeats
+            }
+
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+// 4. Create a new event
+const createEvent = async (req, res, next) => {
+
+    try {
+
         const {
             title,
             description,
@@ -53,75 +156,132 @@ const createEvent = async (req, res, next) => {
             venue,
             price,
             capacity,
-            category,
-            poster
+            category
         } = req.body;
 
-        // Check required fields
+
+        // Required field validation
         if (
-            !title ||
-            !description ||
+            !title?.trim() ||
+            !description?.trim() ||
             !date ||
-            !venue ||
+            !venue?.trim() ||
             !category ||
             price === undefined ||
             capacity === undefined
         ) {
+
             return res.status(400).json({
                 success: false,
                 message: "Please provide all required event details"
             });
         }
 
-        // Validate numeric values
+
+        // Price validation
         if (
             !Number.isFinite(Number(price)) ||
+            Number(price) < 0
+        ) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Please enter a valid non-negative price"
+            });
+        }
+
+
+        // Capacity validation
+        if (
             !Number.isInteger(Number(capacity)) ||
-            Number(price) < 0 ||
             Number(capacity) <= 0
         ) {
+
             return res.status(400).json({
                 success: false,
-                message: "Enter a valid price and positive whole-number capacity"
+                message: "Capacity must be a positive whole number"
             });
         }
 
-        // Validate date
-        if (Number.isNaN(Date.parse(date))) {
+
+        // Date validation
+        const eventDate = new Date(date);
+
+        if (Number.isNaN(eventDate.getTime())) {
+
             return res.status(400).json({
                 success: false,
-                message: "Please provide a valid event date"
+                message: "Please enter a valid event date"
             });
         }
 
-        // Create event in MongoDB
+
+        // Do not allow events in the past
+        if (eventDate < new Date()) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Event date cannot be in the past"
+            });
+        }
+
+
+        // Create event
         const event = await Event.create({
-            title,
-            description,
-            date,
-            venue,
+
+            title: title.trim(),
+
+            description: description.trim(),
+
+            date: eventDate,
+
+            venue: venue.trim(),
+
             price: Number(price),
+
             capacity: Number(capacity),
+
             availableSeats: Number(capacity),
+
             category,
-            poster
+
+            poster: req.file
+                ? `/uploads/${req.file.filename}`
+                : ""
+
         });
 
+
         res.status(201).json({
+
             success: true,
+
             message: "Event created successfully",
-            event: event
+
+            event
+
         });
 
     } catch (error) {
+
+        // Remove uploaded image if event creation fails
+        if (req.file) {
+            await removePoster(`/uploads/${req.file.filename}`);
+        }
+
         next(error);
     }
 };
 
 
-// 4. Update an existing event
+// 5. Update event
+
 const updateEvent = async (req, res, next) => {
+
+    let uploadedPoster = "";
+
     try {
+
         const event = await Event.findById(req.params.id);
 
         if (!event) {
@@ -131,6 +291,8 @@ const updateEvent = async (req, res, next) => {
             });
         }
 
+        const oldPoster = event.poster;
+
         const {
             title,
             description,
@@ -139,63 +301,105 @@ const updateEvent = async (req, res, next) => {
             price,
             capacity,
             category,
-            poster,
             status
         } = req.body;
 
-        if (
-            price !== undefined &&
-            (!Number.isFinite(Number(price)) || Number(price) < 0)
-        ) {
-            return res.status(400).json({
-                success: false,
-                message: "Price cannot be negative"
-            });
+
+        if (price !== undefined) {
+            if (
+                !Number.isFinite(Number(price)) ||
+                Number(price) < 0
+            ) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Enter a valid non-negative price"
+                });
+            }
+
+            event.price = Number(price);
         }
 
-        if (
-            capacity !== undefined &&
-            (!Number.isInteger(Number(capacity)) || Number(capacity) <= 0)
-        ) {
-            return res.status(400).json({
-                success: false,
-                message: "Capacity must be a positive whole number"
-            });
-        }
 
-        if (date !== undefined && Number.isNaN(Date.parse(date))) {
-            return res.status(400).json({
-                success: false,
-                message: "Please provide a valid event date"
-            });
-        }
-
-        // Update only supplied fields
-        if (title !== undefined) event.title = title;
-        if (description !== undefined) event.description = description;
-        if (date !== undefined) event.date = date;
-        if (venue !== undefined) event.venue = venue;
-        if (price !== undefined) event.price = Number(price);
-        if (category !== undefined) event.category = category;
-        if (poster !== undefined) event.poster = poster;
-        if (status !== undefined) event.status = status;
-
-        // Preserve already booked seats
         if (capacity !== undefined) {
-            const bookedSeats = event.capacity - event.availableSeats;
 
-            if (Number(capacity) < bookedSeats) {
+            const newCapacity = Number(capacity);
+
+            if (
+                !Number.isInteger(newCapacity) ||
+                newCapacity <= 0
+            ) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Capacity must be a positive whole number"
+                });
+            }
+
+            const bookedSeats =
+                event.capacity - event.availableSeats;
+
+            if (newCapacity < bookedSeats) {
                 return res.status(400).json({
                     success: false,
                     message: "Capacity cannot be less than already booked seats"
                 });
             }
 
-            event.capacity = Number(capacity);
-            event.availableSeats = Number(capacity) - bookedSeats;
+            event.capacity = newCapacity;
+            event.availableSeats = newCapacity - bookedSeats;
         }
 
+
+        if (date !== undefined) {
+
+            const eventDate = new Date(date);
+
+            if (
+                Number.isNaN(eventDate.getTime()) ||
+                eventDate < new Date()
+            ) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Please enter a valid future event date"
+                });
+            }
+
+            event.date = eventDate;
+        }
+
+
+        if (title !== undefined) {
+            event.title = title.trim();
+        }
+
+        if (description !== undefined) {
+            event.description = description.trim();
+        }
+
+        if (venue !== undefined) {
+            event.venue = venue.trim();
+        }
+
+        if (category !== undefined) {
+            event.category = category;
+        }
+
+        if (status !== undefined) {
+            event.status = status;
+        }
+
+
+        if (req.file) {
+            uploadedPoster = `/uploads/${req.file.filename}`;
+            event.poster = uploadedPoster;
+        }
+
+
         const updatedEvent = await event.save();
+
+        // Remove old poster only after successful database save
+        if (req.file) {
+            await removePoster(oldPoster);
+        }
 
         res.status(200).json({
             success: true,
@@ -204,26 +408,43 @@ const updateEvent = async (req, res, next) => {
         });
 
     } catch (error) {
+
+        if (uploadedPoster) {
+            await removePoster(uploadedPoster);
+        }
+
         next(error);
     }
 };
 
 
-// 5. Delete an event
+// 6. Delete event
 const deleteEvent = async (req, res, next) => {
+
     try {
-        const event = await Event.findByIdAndDelete(req.params.id);
+
+        const event = await Event.findById(req.params.id);
 
         if (!event) {
+
             return res.status(404).json({
                 success: false,
                 message: "Event not found"
             });
         }
 
+        const oldPoster = event.poster;
+
+        await event.deleteOne();
+
+        await removePoster(oldPoster);
+
         res.status(200).json({
+
             success: true,
+
             message: "Event deleted successfully"
+
         });
 
     } catch (error) {
@@ -232,11 +453,18 @@ const deleteEvent = async (req, res, next) => {
 };
 
 
-// Export controller functions
 module.exports = {
+
     getAllEvents,
+
     getEventById,
+
+    getEventStats,
+
     createEvent,
+
     updateEvent,
+
     deleteEvent
+
 };
