@@ -2,12 +2,14 @@ const path = require("path");
 const express = require("express");
 const cors = require("cors");
 
+
 require("dotenv").config();
 
 const connectDB = require("./config/db");
 
 const eventRoutes = require("./routes/eventRoutes");
 const authRoutes = require("./routes/authRoutes");
+const bookingRoutes = require("./routes/bookingRoutes");
 
 const {
     notFound,
@@ -51,6 +53,7 @@ app.get("/api/status", (req, res) => {
 // API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/events", eventRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 
 // Error handling

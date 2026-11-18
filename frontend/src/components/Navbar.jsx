@@ -37,6 +37,14 @@ const Navbar = () => {
                             Hi, {user.name}
                         </span>
 
+                        <Link to="/events">
+                            Explore Events
+                        </Link>
+
+                        <Link to="/my-bookings">
+                            My Bookings
+                        </Link>
+
                         <button
                             className="logout-btn"
                             onClick={handleLogout}

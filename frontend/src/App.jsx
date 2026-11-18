@@ -16,6 +16,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import Events from "./pages/Events";
+import EventDetails from "./pages/EventDetails";
+import MyBookings from "./pages/MyBookings";
 
 
 const AppRoutes = () => {
@@ -71,7 +74,24 @@ const AppRoutes = () => {
                     />
                 </Route>
 
+                {/* Public Events Page */}
+                <Route
+                    path="/events"
+                    element={<Events />}
+                />
 
+                {/* Student-only Booking Pages */}
+                <Route element={<ProtectedRoute allowedRoles={["student"]} />}>
+                    <Route
+                        path="/events/:id"
+                        element={<EventDetails />}
+                    />
+
+                    <Route
+                        path="/my-bookings"
+                        element={<MyBookings />}
+                    />
+                </Route>
                 {/* Unknown routes */}
                 <Route
                     path="*"

@@ -8,20 +8,28 @@ const api = axios.create({
     }
 });
 
-// Automatically attach JWT token to API requests
 api.interceptors.request.use(
     (config) => {
+
         const token = localStorage.getItem("passentry_token");
 
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
 
+        // Let the browser set the multipart boundary for FormData
+        if (
+            typeof FormData !== "undefined" &&
+            config.data instanceof FormData
+        ) {
+            config.headers.delete?.("Content-Type");
+            delete config.headers["Content-Type"];
+        }
+
         return config;
     },
-    (error) => {
-        return Promise.reject(error);
-    }
+
+    (error) => Promise.reject(error)
 );
 
 export default api;

@@ -469,3 +469,762 @@ button {
         padding: 40px 20px;
     }
 }
+
+
+/* ADMIN DASHBOARD */
+
+.admin-page {
+    max-width: 1250px;
+    margin: auto;
+    padding: 55px 30px;
+}
+
+.admin-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 35px;
+}
+
+.admin-heading h1 {
+    font-size: 34px;
+    margin: 12px 0;
+}
+
+.admin-heading p,
+.admin-section-heading p {
+    color: #7a8293;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.create-event-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 13px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #4c55c9;
+    color: white;
+    font-weight: 700;
+}
+
+.create-event-btn:hover {
+    background: #3c45b5;
+}
+
+.admin-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 45px;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 23px;
+    background: white;
+    border: 1px solid #eaedf3;
+    border-radius: 12px;
+}
+
+.stat-icon {
+    width: 49px;
+    height: 49px;
+    display: grid;
+    place-items: center;
+    border-radius: 11px;
+}
+
+.stat-icon.purple {
+    background: #f0f1ff;
+    color: #4c55c9;
+}
+
+.stat-icon.green {
+    background: #eaf9f0;
+    color: #239c59;
+}
+
+.stat-icon.orange {
+    background: #fff3e6;
+    color: #d98727;
+}
+
+.stat-icon.blue {
+    background: #eaf3ff;
+    color: #367ad0;
+}
+
+.stat-card span {
+    color: #7a8293;
+    font-size: 12px;
+}
+
+.stat-card h2 {
+    font-size: 25px;
+    margin-top: 5px;
+}
+
+.admin-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.admin-section-heading h2 {
+    font-size: 25px;
+    margin-bottom: 7px;
+}
+
+.refresh-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    border: 1px solid #dfe3ec;
+    border-radius: 8px;
+    background: white;
+    color: #4c55c9;
+    font-weight: 600;
+}
+
+.admin-event-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 22px;
+}
+
+.admin-event-card {
+    background: white;
+    border: 1px solid #eaedf3;
+    border-radius: 13px;
+    overflow: hidden;
+}
+
+.admin-event-image,
+.event-image-placeholder {
+    width: 100%;
+    height: 175px;
+    object-fit: cover;
+}
+
+.event-image-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #4c55c9;
+    background: #f0f1ff;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.event-image-placeholder span {
+    font-size: 11px;
+}
+
+.admin-event-content {
+    padding: 20px;
+}
+
+.event-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 13px;
+}
+
+.event-category,
+.status-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.event-category {
+    color: #4c55c9;
+    background: #f0f1ff;
+}
+
+.status-badge.upcoming {
+    color: #16804a;
+    background: #e8f8ee;
+}
+
+.status-badge.completed {
+    color: #526078;
+    background: #edf0f5;
+}
+
+.status-badge.cancelled {
+    color: #c03434;
+    background: #fff0f0;
+}
+
+.admin-event-content h3 {
+    font-size: 18px;
+    margin-bottom: 9px;
+}
+
+.event-description {
+    min-height: 43px;
+    font-size: 13px;
+    color: #7a8293;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.admin-event-info {
+    display: grid;
+    gap: 11px;
+    margin: 18px 0;
+    padding: 15px 0;
+    border-top: 1px solid #edf0f5;
+    border-bottom: 1px solid #edf0f5;
+    color: #687185;
+    font-size: 12px;
+}
+
+.admin-event-info span {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.event-action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.edit-event-btn,
+.delete-event-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    flex: 1;
+    padding: 10px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.edit-event-btn {
+    border: none;
+    color: #4c55c9;
+    background: #f0f1ff;
+}
+
+.delete-event-btn {
+    border: none;
+    color: #c03434;
+    background: #fff0f0;
+}
+
+.empty-events {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 65px 20px;
+    background: white;
+    border: 1px dashed #d7dcea;
+    border-radius: 12px;
+    color: #4c55c9;
+    gap: 13px;
+}
+
+.empty-events h3 {
+    color: #30364c;
+}
+
+.empty-events p {
+    color: #7a8293;
+    font-size: 13px;
+}
+
+.admin-loading {
+    color: #687185;
+    padding: 30px 0;
+}
+
+.admin-error,
+.admin-success {
+    padding: 13px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 13px;
+}
+
+.admin-error {
+    background: #fff0f0;
+    color: #c03434;
+}
+
+.admin-success {
+    background: #eaf9f0;
+    color: #16804a;
+}
+
+
+/* EVENT FORM */
+
+.event-form-wrapper {
+    margin-bottom: 40px;
+    padding: 28px;
+    background: white;
+    border: 1px solid #e6e9f1;
+    border-radius: 13px;
+}
+
+.form-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.form-heading h2 {
+    margin-top: 8px;
+    font-size: 24px;
+}
+
+.icon-btn {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid #e2e5ef;
+    background: white;
+    border-radius: 8px;
+}
+
+.event-form {
+    display: grid;
+    gap: 17px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px 13px;
+    border: 1px solid #dfe3ec;
+    border-radius: 8px;
+    outline: none;
+    background: white;
+    color: #30364c;
+    font: inherit;
+    font-size: 13px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: #4c55c9;
+    box-shadow: 0 0 0 3px rgba(76, 85, 201, 0.08);
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.poster-upload {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 17px;
+    border: 1px dashed #cdd2e1;
+    border-radius: 9px;
+    color: #4c55c9;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.poster-upload input {
+    display: none;
+}
+
+.poster-preview {
+    width: 160px;
+    height: 110px;
+    object-fit: cover;
+    margin-top: 12px;
+    border-radius: 8px;
+}
+
+.file-selected {
+    color: #16804a;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.cancel-btn,
+.save-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 19px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.cancel-btn {
+    border: 1px solid #dfe3ec;
+    background: white;
+    color: #687185;
+}
+
+.save-btn {
+    border: none;
+    background: #4c55c9;
+    color: white;
+}
+
+.save-btn:disabled,
+.cancel-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* RESPONSIVE ADMIN DASHBOARD */
+
+@media (max-width: 900px) {
+    .admin-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .admin-page {
+        padding: 35px 17px;
+    }
+
+    .admin-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .admin-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .event-form-wrapper {
+        padding: 20px;
+    }
+
+    .admin-section-heading {
+        align-items: flex-start;
+        gap: 15px;
+        flex-direction: column;
+    }
+}
+
+
+/* DAY 7 - STUDENT EVENTS */
+
+.student-events-page,
+.event-details-page,
+.my-bookings-page {
+    width: min(1200px, 92%);
+    margin: 40px auto;
+    min-height: 70vh;
+}
+
+.student-page-heading {
+    margin-bottom: 30px;
+}
+
+.student-page-heading h1 {
+    font-size: 34px;
+    margin: 10px 0;
+    color: #202033;
+}
+
+.student-page-heading p {
+    color: #777;
+}
+
+.student-event-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.student-event-card,
+.event-details-card,
+.booking-card {
+    background: #fff;
+    border: 1px solid #ececf2;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
+}
+
+.student-event-image {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+}
+
+.student-event-placeholder {
+    height: 190px;
+    display: grid;
+    place-content: center;
+    background: #f2efff;
+    color: #7653c8;
+}
+
+.student-event-content {
+    padding: 20px;
+}
+
+.student-event-content h2 {
+    font-size: 21px;
+    margin: 12px 0;
+    color: #242438;
+}
+
+.student-event-content p {
+    color: #777;
+    line-height: 1.6;
+}
+
+.student-event-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 18px 0;
+    color: #666;
+}
+
+.student-event-meta span {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.student-event-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid #eee;
+    padding-top: 17px;
+}
+
+.student-event-footer strong {
+    display: block;
+    font-size: 21px;
+    color: #25233a;
+}
+
+.student-event-footer small {
+    display: block;
+    color: #777;
+    margin-top: 4px;
+}
+
+.view-event-btn,
+.book-ticket-btn {
+    background: #7552c7;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 16px;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.view-event-btn:hover,
+.book-ticket-btn:hover {
+    background: #5d3da9;
+}
+
+.event-details-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.event-details-image {
+    width: 100%;
+    height: 100%;
+    min-height: 450px;
+    object-fit: cover;
+}
+
+.event-details-content {
+    padding: 30px;
+}
+
+.event-details-content h1 {
+    font-size: 30px;
+    margin: 15px 0;
+}
+
+.event-details-content > p {
+    color: #777;
+    line-height: 1.7;
+}
+
+.booking-panel {
+    background: #f8f7fc;
+    padding: 22px;
+    border-radius: 12px;
+    margin-top: 25px;
+}
+
+.booking-panel h2 {
+    margin-top: 0;
+}
+
+.booking-panel label {
+    display: block;
+    margin: 15px 0 8px;
+}
+
+.booking-panel input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    box-sizing: border-box;
+}
+
+.booking-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+}
+
+.book-ticket-btn {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.book-ticket-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.booking-panel small {
+    display: block;
+    margin-top: 12px;
+    color: #777;
+    line-height: 1.5;
+}
+
+.back-btn {
+    margin-bottom: 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #7552c7;
+    font-size: 15px;
+}
+
+.booking-list {
+    display: grid;
+    gap: 20px;
+}
+
+.booking-card {
+    padding: 22px;
+}
+
+.booking-card-heading,
+.booking-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.booking-card-heading h3 {
+    margin: 8px 0;
+}
+
+.booking-card h2 {
+    margin: 20px 0;
+}
+
+.booking-card-footer {
+    border-top: 1px solid #eee;
+    padding-top: 16px;
+    margin-top: 16px;
+}
+
+.page-message {
+    text-align: center;
+    padding: 50px 15px;
+    color: #777;
+}
+
+.page-error {
+    color: #c62828;
+    margin: 15px 0;
+}
+
+@media (max-width: 768px) {
+    .event-details-card {
+        grid-template-columns: 1fr;
+    }
+
+    .event-details-image {
+        min-height: 220px;
+        max-height: 300px;
+    }
+
+    .student-page-heading h1 {
+        font-size: 27px;
+    }
+
+    .student-event-footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
