@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from "react";
-import { Ticket, CalendarDays, MapPin } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
+import { Ticket, CalendarDays, MapPin, Clock } from "lucide-react";
 import api from "../services/api";
 
 const MyBookings = () => {
@@ -9,103 +10,197 @@ const MyBookings = () => {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        const fetchBookings = async () => {
-            try {
-                const response = await api.get("/bookings/my-bookings");
-                setBookings(response.data.bookings || []);
-            } catch (err) {
-                setError(
-                    err.response?.data?.message ||
-                    "Unable to load your bookings."
-                );
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchBookings();
     }, []);
 
+    const fetchBookings = async () => {
+        try {
+            setLoading(true);
+            setError("");
+
+            const response = await api.get("/bookings/my-bookings");
+
+            setBookings(response.data.bookings || []);
+
+        } catch (err) {
+            setError(
+                err.response?.data?.message ||
+                "Unable to load your bookings."
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const formatDate = (date) => {
+        if (!date) return "Date unavailable";
+
+        return new Date(date).toLocaleDateString("en-IN", {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        });
+    };
+
     if (loading) {
-        return <p className="page-message">Loading your bookings...</p>;
+        return (
+            <div className="loading-screen">
+                Loading your tickets...
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="my-bookings-page">
+                <p className="error-message">{error}</p>
+                <button onClick={fetchBookings}>
+                    Try Again
+                </button>
+            </div>
+        );
     }
 
     return (
-        <main className="my-bookings-page">
-            <div className="student-page-heading">
-                <span className="small-label">YOUR PASSENTRY ACCOUNT</span>
+        <div className="my-bookings-page">
+
+            <div className="bookings-heading">
+                <span className="small-label">
+                    YOUR PASSENTRY ACCOUNT
+                </span>
+
                 <h1>My Bookings</h1>
-                <p>View your event reservations and ticket details.</p>
+
+                <p>
+                    Your event reservations and digital tickets
+                    are available here.
+                </p>
             </div>
 
-            {error && <p className="page-error">{error}</p>}
+            {bookings.length === 0 ? (
+                <div className="empty-bookings">
+                    <Ticket size={45} />
 
-            {!error && bookings.length === 0 ? (
-                <div className="empty-events">
-                    <Ticket size={40} />
-                    <h3>No bookings yet</h3>
-                    <p>Explore events and reserve your first ticket.</p>
+                    <h2>No bookings yet</h2>
+
+                    <p>
+                        Explore events and reserve your first ticket.
+                    </p>
+
+                    <a href="/events" className="primary-btn">
+                        Explore Events
+                    </a>
                 </div>
             ) : (
+
                 <div className="booking-list">
+
                     {bookings.map((booking) => (
-                        <article
-                            className="booking-card"
+
+                        <div
+                            className="day8-ticket-card"
                             key={booking._id}
                         >
-                            <div className="booking-card-heading">
-                                <div>
-                                    <span className="small-label">
-                                        BOOKING REFERENCE
-                                    </span>
-                                    <h3>{booking.bookingReference}</h3>
+
+                            <div className="day8-ticket-details">
+
+                                <span className="small-label">
+                                    DIGITAL EVENT TICKET
+                                </span>
+
+                                <h2>
+                                    {booking.event?.title ||
+                                        "Event unavailable"}
+                                </h2>
+
+                                <p className="ticket-reference">
+                                    Booking ID: {booking.bookingReference}
+                                </p>
+
+                                <div className="ticket-info">
+                                    <p>
+                                        <CalendarDays size={17} />
+                                        {formatDate(booking.event?.date)}
+                                    </p>
+
+                                    <p>
+                                        <MapPin size={17} />
+                                        {booking.event?.venue || "Venue unavailable"}
+                                    </p>
+
+                                    <p>
+                                        <Ticket size={17} />
+                                        {booking.quantity} Ticket(s)
+                                    </p>
+
+                                    <p>
+                                        <Clock size={17} />
+                                        Booked: {formatDate(booking.createdAt)}
+                                    </p>
                                 </div>
 
-                                <span className={`status-badge ${booking.status}`}>
-                                    {booking.status}
-                                </span>
+                                <div className="ticket-amount">
+                                    Total Amount: ₹
+                                    {Number(booking.totalAmount).toFixed(2)}
+                                </div>
+
+                                <div className="ticket-status">
+                                    <span>
+                                        Booking: {booking.status}
+                                    </span>
+
+                                    <span>
+                                        Payment: {booking.paymentStatus}
+                                    </span>
+                                </div>
+
                             </div>
 
-                            {booking.event ? (
-                                <>
-                                    <h2>{booking.event.title}</h2>
+                            <div className="day8-qr-section">
 
-                                    <div className="student-event-meta">
-                                        <span>
-                                            <CalendarDays size={16} />
-                                            {new Date(
-                                                booking.event.date
-                                            ).toLocaleDateString("en-IN")}
-                                        </span>
+                                <h3>Your QR Ticket</h3>
 
-                                        <span>
-                                            <MapPin size={16} />
-                                            {booking.event.venue}
-                                        </span>
-                                    </div>
-                                </>
-                            ) : (
-                                <p>Event details are no longer available.</p>
-                            )}
+                                {booking.qrToken ? (
+                                    <>
+                                        <div className="qr-code-box">
+                                            <QRCodeSVG
+                                                value={booking.qrToken}
+                                                size={180}
+                                                level="H"
+                                                includeMargin={true}
+                                            />
+                                        </div>
 
-                            <div className="booking-card-footer">
-                                <span>
-                                    Tickets: <strong>{booking.quantity}</strong>
-                                </span>
+                                        <p>
+                                            Show this QR code at the
+                                            event verification counter.
+                                        </p>
 
-                                <span>
-                                    Total: <strong>₹{booking.totalAmount}</strong>
-                                </span>
+                                        {booking.paymentStatus !== "paid" && (
+                                            <small className="qr-pending">
+                                                Payment is pending.
+                                                This ticket is not yet valid.
+                                            </small>
+                                        )}
+                                    </>
+                                ) : (
+                                    <p>
+                                        QR code is not available.
+                                        Please refresh the page.
+                                    </p>
+                                )}
 
-                                <span>
-                                    Payment: <strong>{booking.paymentStatus}</strong>
-                                </span>
                             </div>
-                        </article>
+
+                        </div>
+
                     ))}
+
                 </div>
+
             )}
-        </main>
+
+        </div>
     );
 };
 

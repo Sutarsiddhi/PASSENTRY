@@ -1,4 +1,4 @@
-
+const { randomBytes } = require("crypto");
 const mongoose = require("mongoose");
 const crypto = require("crypto");
 
@@ -78,15 +78,19 @@ const createBooking = async (req, res, next) => {
                 "PASS-" +
                 crypto.randomBytes(5).toString("hex").toUpperCase();
 
-            const booking = new Booking({
-                bookingReference,
+            const booking = {
+                bookingReference: `PASS-${randomBytes(4).toString("hex").toUpperCase()}`,
+
+                // Generate a unique, difficult-to-guess QR token
+                qrToken: randomBytes(32).toString("hex"),
+
                 student: studentId,
-                event: event._id,
+                event: eventId,
                 quantity: ticketQuantity,
-                totalAmount: event.price * ticketQuantity,
+                totalAmount: updatedEvent.price * ticketQuantity,
                 status: "reserved",
                 paymentStatus: "pending"
-            });
+            };
 
             const savedBookings = await Booking.create(
                 [booking],
@@ -130,11 +134,16 @@ const getMyBookings = async (req, res, next) => {
         const bookings = await Booking.find({
             student: studentId
         })
-            .populate(
-                "event",
-                "title description date venue price poster category status"
-            )
+            .populate("event", "title description date venue poster price")
             .sort({ createdAt: -1 });
+
+        // Generate tokens for bookings created before Day 8
+        for (const booking of bookings) {
+            if (!booking.qrToken) {
+                booking.qrToken = randomBytes(32).toString("hex");
+                await booking.save();
+            }
+        }
 
         res.status(200).json({
             success: true,

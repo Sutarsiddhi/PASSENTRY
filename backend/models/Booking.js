@@ -9,6 +9,13 @@ const bookingSchema = new mongoose.Schema(
             unique: true
         },
 
+        // Unique secret used inside the QR code
+        qrToken: {
+            type: String,
+            unique: true,
+            sparse: true
+        },
+
         student: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
