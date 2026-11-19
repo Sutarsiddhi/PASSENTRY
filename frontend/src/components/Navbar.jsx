@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Ticket, LogOut, LayoutDashboard } from "lucide-react";
 
 import { useAuth } from "../context/AuthContext";
+import { ScanLine } from "lucide-react";
 
 const Navbar = () => {
 
@@ -44,6 +45,13 @@ const Navbar = () => {
                         <Link to="/my-bookings">
                             My Bookings
                         </Link>
+
+                        {user?.role === "admin" && (
+                            <Link to="/admin/scan">
+                                <ScanLine size={17} />
+                                QR Scanner
+                            </Link>
+                        )}
 
                         <button
                             className="logout-btn"

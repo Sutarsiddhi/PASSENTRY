@@ -187,8 +187,89 @@ const getBookingById = async (req, res, next) => {
     }
 };
 
+
+// Verify a QR ticket (Admin only)
+const verifyTicket = async (req, res, next) => {
+    try {
+        const { qrToken } = req.body;
+
+        if (!qrToken || typeof qrToken !== "string") {
+            return res.status(400).json({
+                success: false,
+                valid: false,
+                message: "QR token is required"
+            });
+        }
+
+        const booking = await Booking.findOne({
+            qrToken: qrToken.trim()
+        })
+            .populate("event", "title date venue")
+            .populate("student", "name email");
+
+        if (!booking) {
+            return res.status(404).json({
+                success: false,
+                valid: false,
+                message: "Invalid ticket. Booking not found."
+            });
+        }
+
+        const studentName =
+            booking.student?.name ||
+            booking.student?.fullName ||
+            "Student";
+
+        const ticketDetails = {
+            bookingReference: booking.bookingReference,
+            studentName,
+            studentEmail: booking.student?.email || "",
+            eventName: booking.event?.title || "Event unavailable",
+            eventDate: booking.event?.date || null,
+            venue: booking.event?.venue || "Venue unavailable",
+            quantity: booking.quantity,
+            totalAmount: booking.totalAmount,
+            bookingStatus: booking.status,
+            paymentStatus: booking.paymentStatus
+        };
+
+        if (booking.status !== "reserved") {
+            return res.status(200).json({
+                success: true,
+                valid: false,
+                message: "This booking has been cancelled.",
+                booking: ticketDetails
+            });
+        }
+
+        if (booking.paymentStatus !== "paid") {
+            return res.status(200).json({
+                success: true,
+                valid: false,
+                message:
+                    booking.paymentStatus === "failed"
+                        ? "Payment failed. Ticket cannot be accepted."
+                        : "Payment is pending. Ticket cannot be accepted yet.",
+                booking: ticketDetails
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            valid: true,
+            message: "Ticket verified successfully.",
+            booking: ticketDetails
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 module.exports = {
     createBooking,
     getMyBookings,
-    getBookingById
+    getBookingById,
+    verifyTicket
 };

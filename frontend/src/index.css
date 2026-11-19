@@ -1372,3 +1372,185 @@ button {
         font-size: 27px;
     }
 }
+
+
+/* DAY 9 - ADMIN QR TICKET SCANNER */
+
+.admin-scanner-page {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.scanner-heading {
+    margin-bottom: 30px;
+}
+
+.scanner-heading h1 {
+    font-size: 34px;
+    margin: 10px 0;
+}
+
+.scanner-heading p {
+    color: #777;
+    line-height: 1.6;
+}
+
+.scanner-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 25px;
+    align-items: start;
+}
+
+.scanner-card,
+.verification-card {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 14px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
+}
+
+.scanner-card-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.scanner-card-heading h2,
+.verification-card h2 {
+    font-size: 21px;
+    margin: 0;
+}
+
+.qr-reader-container {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.qr-reader-container video {
+    border-radius: 8px;
+}
+
+#passentry-qr-reader {
+    border: none !important;
+}
+
+#passentry-qr-reader button {
+    cursor: pointer;
+    padding: 9px 15px;
+    border: none;
+    border-radius: 7px;
+    background: #252525;
+    color: white;
+    margin: 5px;
+}
+
+#passentry-qr-reader select {
+    padding: 8px;
+    border-radius: 6px;
+    max-width: 100%;
+}
+
+.scanner-help {
+    text-align: center;
+    color: #777;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-top: 18px;
+}
+
+.verification-empty {
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    color: #888;
+    text-align: center;
+}
+
+.verification-result {
+    text-align: center;
+    padding-top: 25px;
+}
+
+.verification-icon {
+    margin-bottom: 12px;
+}
+
+.verification-icon.valid {
+    color: #15803d;
+}
+
+.verification-icon.invalid {
+    color: #dc2626;
+}
+
+.verification-result h3 {
+    margin: 10px 0;
+    font-size: 23px;
+}
+
+.verification-message {
+    color: #777;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.verified-booking {
+    background: #f8f8f8;
+    padding: 18px;
+    border-radius: 10px;
+    text-align: left;
+    display: grid;
+    gap: 13px;
+}
+
+.verified-booking p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.scan-again-btn {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
+    padding: 12px;
+    margin-top: 22px;
+    border: none;
+    border-radius: 8px;
+    background: #252525;
+    color: white;
+    cursor: pointer;
+}
+
+.scan-again-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 800px) {
+    .scanner-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .scanner-heading h1 {
+        font-size: 27px;
+    }
+
+    .scanner-card,
+    .verification-card {
+        padding: 18px;
+    }
+}

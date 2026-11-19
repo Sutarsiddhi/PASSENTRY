@@ -19,6 +19,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Events from "./pages/Events";
 import EventDetails from "./pages/EventDetails";
 import MyBookings from "./pages/MyBookings";
+import AdminTicketScanner from "./pages/AdminTicketScanner";
 
 
 const AppRoutes = () => {
@@ -66,12 +67,19 @@ const AppRoutes = () => {
                 </Route>
 
 
-                {/* Admin-only dashboard */}
+                {/* Admin-only pages */}
                 <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+
                     <Route
                         path="/admin"
                         element={<AdminDashboard />}
                     />
+
+                    <Route
+                        path="/admin/scan"
+                        element={<AdminTicketScanner />}
+                    />
+
                 </Route>
 
                 {/* Public Events Page */}
